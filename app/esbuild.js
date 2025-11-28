@@ -1,7 +1,7 @@
 import * as esbuild  from "esbuild";
 
 esbuild.build({
-    entryPoints: ["src/handlers/*.ts"],
+    entryPoints: ["src/heandlers/URLshortener.ts"],
     minify: true,
     bundle: true,
     platform: 'node',
