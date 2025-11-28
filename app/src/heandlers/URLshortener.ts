@@ -1,6 +1,6 @@
 import type { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { putShortLink, TABLE_NAME } from "../services/dynamoDB";
-import { generateShortId, analyzeUrlCompression, createCompressedUrl } from "../services/urlCompressor";
+import { generateShortId } from "../services/urlCompressor";
 
 function isValidUrl(url: string): boolean {
   try {
@@ -12,8 +12,6 @@ function isValidUrl(url: string): boolean {
 }
 
 export const handler = async (event: any): Promise<APIGatewayProxyResult> => {
-  console.log("Event received:", JSON.stringify(event, null, 2));
-  
   const headers = {
     "Content-Type": "application/json",
     "Access-Control-Allow-Origin": "*",
@@ -22,9 +20,7 @@ export const handler = async (event: any): Promise<APIGatewayProxyResult> => {
     "Access-Control-Max-Age": "86400"
   };
 
-  // API Gateway HTTP API v2 uses requestContext.http.method
   const method = event.requestContext?.http?.method || event.httpMethod;
-  console.log("Method detected:", method);
   
   if (method === "OPTIONS") {
     return { statusCode: 200, headers, body: "" };
@@ -65,23 +61,11 @@ export const handler = async (event: any): Promise<APIGatewayProxyResult> => {
       body: JSON.stringify({ error: "Invalid or missing URL" })
     };
   }
-
-  const compression = analyzeUrlCompression(originalUrl);
   
   const id = generateShortId(6);
   const baseUrl = process.env.BASE_URL || "https://example.short";
   const shortUrl = `${baseUrl.replace(/\/$/, "")}/${id}`;
   const timestamp = new Date().toISOString();
-
-  console.log("URL Compression Analysis:", {
-    original: originalUrl,
-    original_length: originalUrl.length,
-    short_url: shortUrl,
-    short_url_length: shortUrl.length,
-    savings_bytes: originalUrl.length - shortUrl.length,
-    short_id_length: id.length,
-    reduction_percentage: Math.round((1 - shortUrl.length / originalUrl.length) * 100)
-  });
 
   try {
     const item = {
@@ -92,14 +76,7 @@ export const handler = async (event: any): Promise<APIGatewayProxyResult> => {
       timestamp
     };
 
-    console.log("Attempting to save to DynamoDB:", {
-      tableName: TABLE_NAME,
-      item
-    });
-
     await putShortLink(item);
-    
-    console.log("Successfully saved to DynamoDB:", id);
 
     return {
       statusCode: 201,
@@ -108,13 +85,7 @@ export const handler = async (event: any): Promise<APIGatewayProxyResult> => {
         id,
         original_url: originalUrl,
         short_url: shortUrl,
-        created_at: timestamp,
-        compression: {
-          original_length: originalUrl.length,
-          short_id_length: id.length,
-          total_short_url_length: shortUrl.length,
-          reduction_percentage: Math.round((1 - shortUrl.length / originalUrl.length) * 100)
-        }
+        created_at: timestamp
       })
     };
   } catch (error: any) {
