@@ -61,11 +61,12 @@ jobs:
         run: terraform validate
 
       - name: Terraform Plan
-        if: github.event_name == 'pull_request'
         working-directory: terraform
         run: terraform plan -input=false
 
-      - name: Terraform Apply
-        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev')
-        working-directory: terraform
-        run: terraform apply -auto-approve -input=false
+      # Terraform Apply disabled to prevent duplicate resources
+      # Deploy manually from local machine after reviewing the plan
+      # - name: Terraform Apply
+      #   if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev')
+      #   working-directory: terraform
+      #   run: terraform apply -auto-approve -input=false
