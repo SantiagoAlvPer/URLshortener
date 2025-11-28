@@ -88,7 +88,7 @@ resource "aws_api_gateway_integration" "shorten_options_integration" {
   resource_id = aws_api_gateway_resource.shorten_resource.id
   http_method = aws_api_gateway_method.shorten_options.http_method
   type        = "MOCK"
-  
+
   request_templates = {
     "application/json" = "{\"statusCode\": 200}"
   }
