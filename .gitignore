@@ -1,4 +1,5 @@
-# Logs
+package-lock.json
+package.json
 logs
 *.log
 npm-debug.log*
@@ -6,8 +7,6 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
-/package-lock.json
-/package.json
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
@@ -136,28 +135,25 @@ dist
 !.yarn/sdks
 !.yarn/versions
 
-# Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
-# Terraform sensitive files
-.terraform/
-terraform.tfstate
-terraform.tfstate.backup
-terraform.tfvars
-*.tfvars
-crash.log
-.terraformrc
-terraform.rc
+**/.terraform/
+**/.terraform.lock.hcl
+**/terraform.tfstate
+**/terraform.tfstate.*
+**/terraform.tfstate.backup
+**/.terraform.tfstate.lock.info
+**/crash.log
+**/crash.*.log
+**/*.tfvars
+**/*.tfvars.json
+**/override.tf
+**/override.tf.json
+**/*_override.tf
+**/*_override.tf.json
+**/.terraformrc
+**/terraform.rc
 
-# Node.js/TypeScript build output
-dist/
-build/
-out/
-
-# TypeScript declaration files
-*.d.ts
-
-# Ignore sensitive config files
-secrets.*
-config.*.local.*
+lambda_function.zip
+**/dist/
