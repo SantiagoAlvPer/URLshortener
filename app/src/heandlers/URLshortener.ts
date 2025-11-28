@@ -63,8 +63,8 @@ export const handler = async (event: any): Promise<APIGatewayProxyResult> => {
   }
   
   const id = generateShortId(6);
-  const baseUrl = process.env.BASE_URL || "https://example.short";
-  const shortUrl = `${baseUrl.replace(/\/$/, "")}/${id}`;
+  const parsedUrl = new URL(originalUrl);
+  const shortUrl = `${parsedUrl.protocol}//${parsedUrl.host}/${id}`;
   const timestamp = new Date().toISOString();
 
   try {
@@ -72,7 +72,7 @@ export const handler = async (event: any): Promise<APIGatewayProxyResult> => {
       id,
       link_og: originalUrl,
       link_short: shortUrl,
-      visits: 0,
+      visits: [] as string[],
       timestamp
     };
 

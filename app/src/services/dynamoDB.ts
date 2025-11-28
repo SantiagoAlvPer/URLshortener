@@ -11,7 +11,7 @@ export interface ShortLinkItem {
 	id: string;
 	link_og: string;
 	link_short: string;
-	visits: number;
+	visits: string[];
 	timestamp: string;
 }
 
