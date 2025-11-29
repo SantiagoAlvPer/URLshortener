@@ -135,36 +135,6 @@ resource "aws_api_gateway_integration" "shorten_integration" {
   uri                     = aws_lambda_function.shorten.invoke_arn
 }
 
-resource "aws_api_gateway_method_response" "response_200" {
-  rest_api_id = aws_api_gateway_rest_api.shortener_api.id
-  resource_id = aws_api_gateway_resource.shorten_resource.id
-  http_method = aws_api_gateway_method.shorten_post.http_method
-  status_code = "200"
-
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin"  = true
-    "method.response.header.Access-Control-Allow-Headers" = true
-    "method.response.header.Access-Control-Allow-Methods" = true
-  }
-}
-
-resource "aws_api_gateway_integration_response" "response_200" {
-  rest_api_id = aws_api_gateway_rest_api.shortener_api.id
-  resource_id = aws_api_gateway_resource.shorten_resource.id
-  http_method = aws_api_gateway_method.shorten_post.http_method
-  status_code = aws_api_gateway_method_response.response_200.status_code
-
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-    "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,OPTIONS'"
-  }
-
-  depends_on = [
-    aws_api_gateway_integration.shorten_integration
-  ]
-}
-
 resource "aws_lambda_permission" "shorten_lambda_permission" {
   statement_id  = "AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"
@@ -194,7 +164,6 @@ resource "aws_api_gateway_deployment" "shortener_deployment" {
   depends_on = [
     aws_api_gateway_integration.shorten_integration,
     aws_api_gateway_integration.shorten_options_integration,
-    aws_api_gateway_integration_response.response_200,
     aws_api_gateway_integration_response.shorten_options_integration_response
   ]
 }
